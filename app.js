@@ -4,22 +4,41 @@ const yargs = require('yargs')
 const argv = yargs.argv
 const notes = require('./notes')
 var command = argv._[0]
-console.log("process:", process.argv)
-console.log("yargs:", argv)
-
-console.log("command:", command)
-
-
 
 if (command === "add") {
-    notes.addNotes(argv.title, argv.body)
-} else if (command === "list") {
-    notes.getALl()
-} else if (command === "delete") {
-    notes.Delete(argv.title)
+    const note = notes.addNotes(argv.title, argv.body)
+    if (note) {
+       notes.loadNote(note)
+    } else {
+        console.log('Note created')
+    }
+} 
+else if (command === "list") {
+  const lists=  notes.getALl()
+ 
+  if(lists){
+    console.log(lists.length)
+    lists.map((list)=>{
+        notes.loadNote(list)
+    })
+   
 
-} else if (command === 'read') {
-    notes.read(argv.title)
+  }
+}
+ else if (command === "delete") {
+    const DeleteNotes = notes.Delete(argv.title)
+    const message = DeleteNotes ? "Note Deleted" : "Not  not found"
+    console.log(message)
+
+}
+ else if (command === 'read') {
+    const readNotes = notes.read(argv.title)
+    if (readNotes) {
+       notes.loadNote(readNotes)
+
+    } else {
+        console.log('Note Not found ')
+    }
 
 } else {
     console.log('Unknown Command ')
